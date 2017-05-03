@@ -48,14 +48,13 @@
                     '</span>';
             }
 
-            html += '<ion-scroll ';
+            html += '<div style="overflow-y:scroll;"';
 
             if (ctrl.options.pullRefresh.active) {
                 html += 'on-scroll="vm.onScroll()" ';
             }
 
-            html += 'scrollbar-x="false" delegate-handle="' + ctrl.options.carouselId + '" ' +
-                'zooming="false" direction="x" overflow-scroll="false" has-bouncing="true">' +
+            html += 'scrollbar-x="false" delegate-handle="' + ctrl.options.carouselId + '" >' +
                 '<nav style="visibility:hidden;">' +
                 '<ul> <li ' +
                 'ng-repeat="item in vm.arrayProvider track by ' +
@@ -64,7 +63,7 @@
                 'ng-class="{\'active\':vm.itemActive === item}">' +
                 createItemDirective() +
                 '</li>' +
-                '</ul></nav></ion-scroll></div>';
+                '</ul></nav></div></div>';
 
             // Compile dynamic template
             html = $compile(html)(scope);
@@ -78,7 +77,6 @@
                     ctrl.initCarousel();
                 }
 
-                allowVerticalScroll();
             }, 0);
 
             function createItemDirective() {
@@ -89,33 +87,6 @@
                 directive += '></' + ctrl.itemDirective + '>';
 
                 return directive;
-            }
-
-            // this method allows to scroll the page below the carousel
-            function allowVerticalScroll() {
-                var sv        = $ionicScrollDelegate.$getByHandle(ctrl.options.carouselId).getScrollView();
-                var container = sv.__container;
-
-                var originaltouchStart = sv.touchStart;
-                var originaltouchMove  = sv.touchMove;
-
-                container.removeEventListener('touchstart', sv.touchStart);
-                document.removeEventListener('touchmove', sv.touchMove);
-
-                sv.touchStart = function (e) {
-                    e.preventDefault = function () {
-                    };
-                    originaltouchStart.apply(sv, [e]);
-                };
-
-                sv.touchMove = function (e) {
-                    e.preventDefault = function () {
-                    };
-                    originaltouchMove.apply(sv, [e]);
-                };
-
-                container.addEventListener('touchstart', sv.touchStart, false);
-                document.addEventListener('touchmove', sv.touchMove, false);
             }
         }
     }
